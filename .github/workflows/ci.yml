@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  python-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt ruff
+      - run: ruff check .
+      - run: pytest -q
+
+  go-client:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: go
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+      - run: go vet ./...
+      - run: go test ./...
+      - run: go build ./...
+
+  docker-end-to-end:
+    needs: [python-tests, go-client]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+      - name: Build and start the API container
+        run: |
+          docker build -t rag-api .
+          docker run -d --name rag -p 8000:8000 rag-api
+          for i in $(seq 1 30); do curl -sf localhost:8000/health && break; sleep 1; done
+      - name: Ask questions with the Go client
+        working-directory: go
+        run: |
+          go run ./cmd/ask -url http://localhost:8000 "Which TCP port does third-party router control use?" | tee out.txt
+          grep -q 52116 out.txt
+          go run ./cmd/ask -url http://localhost:8000 "Who won the World Cup?" | tee refuse.txt
+          grep -q "could not find" refuse.txt
+
+  benchmark-minilm:
+    needs: python-tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt sentence-transformers --extra-index-url https://download.pytorch.org/whl/cpu
+      - name: Benchmark with a neural embedding model (all-MiniLM-L6-v2)
+        run: python -m ragkit.benchmark --embedder minilm --out ci-results
+      - uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-minilm
+          path: ci-results/

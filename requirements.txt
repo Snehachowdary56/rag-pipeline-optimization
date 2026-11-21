@@ -1,0 +1,8 @@
+numpy>=1.26
+scikit-learn>=1.4
+hnswlib>=0.8
+qdrant-client>=1.9
+fastapi>=0.110
+uvicorn>=0.29
+httpx>=0.27
+pytest>=8

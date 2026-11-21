@@ -1,0 +1,132 @@
+{
+  "embedder": "lsa",
+  "chunking_and_hybrid": [
+    {
+      "setup": "section chunks, dense",
+      "chunks": 30,
+      "questions": 30,
+      "recall@1": 0.9,
+      "recall@3": 0.967,
+      "mrr": 0.933,
+      "answer_hit": 0.933,
+      "retrieve_ms_p50": 0.484,
+      "retrieve_ms_p95": 0.573
+    },
+    {
+      "setup": "40-word windows (overlap 10), dense",
+      "chunks": 34,
+      "questions": 30,
+      "recall@1": 0.9,
+      "recall@3": 0.967,
+      "mrr": 0.933,
+      "answer_hit": 0.8,
+      "retrieve_ms_p50": 0.502,
+      "retrieve_ms_p95": 0.693
+    },
+    {
+      "setup": "80-word windows (overlap 20), dense",
+      "chunks": 18,
+      "questions": 30,
+      "recall@1": 0.867,
+      "recall@3": 0.967,
+      "mrr": 0.917,
+      "answer_hit": 0.9,
+      "retrieve_ms_p50": 0.527,
+      "retrieve_ms_p95": 1.284
+    },
+    {
+      "setup": "section chunks, hybrid (dense + keyword)",
+      "chunks": 30,
+      "questions": 30,
+      "recall@1": 0.867,
+      "recall@3": 0.967,
+      "mrr": 0.917,
+      "answer_hit": 0.9,
+      "retrieve_ms_p50": 0.957,
+      "retrieve_ms_p95": 1.091
+    }
+  ],
+  "index_speed": [
+    {
+      "index": "flat (exact)",
+      "vectors": 50000,
+      "build_s": 0.04,
+      "query_ms_p50": 3.594,
+      "query_ms_p95": 4.211,
+      "recall@10_vs_exact": 1.0
+    },
+    {
+      "index": "hnsw ef_search=16",
+      "vectors": 50000,
+      "build_s": 7.45,
+      "query_ms_p50": 0.058,
+      "query_ms_p95": 0.116,
+      "recall@10_vs_exact": 0.625
+    },
+    {
+      "index": "hnsw ef_search=64",
+      "vectors": 50000,
+      "build_s": 7.45,
+      "query_ms_p50": 0.149,
+      "query_ms_p95": 0.245,
+      "recall@10_vs_exact": 0.88
+    },
+    {
+      "index": "hnsw ef_search=256",
+      "vectors": 50000,
+      "build_s": 7.45,
+      "query_ms_p50": 0.396,
+      "query_ms_p95": 0.494,
+      "recall@10_vs_exact": 0.986
+    }
+  ],
+  "index_speed_small": [
+    {
+      "index": "flat (exact)",
+      "vectors": 5000,
+      "build_s": 0.0,
+      "query_ms_p50": 0.368,
+      "query_ms_p95": 0.428,
+      "recall@10_vs_exact": 1.0
+    },
+    {
+      "index": "hnsw ef_search=16",
+      "vectors": 5000,
+      "build_s": 0.56,
+      "query_ms_p50": 0.034,
+      "query_ms_p95": 0.073,
+      "recall@10_vs_exact": 0.85
+    },
+    {
+      "index": "hnsw ef_search=64",
+      "vectors": 5000,
+      "build_s": 0.56,
+      "query_ms_p50": 0.094,
+      "query_ms_p95": 0.152,
+      "recall@10_vs_exact": 0.99
+    },
+    {
+      "index": "hnsw ef_search=256",
+      "vectors": 5000,
+      "build_s": 0.56,
+      "query_ms_p50": 0.273,
+      "query_ms_p95": 0.332,
+      "recall@10_vs_exact": 1.0
+    },
+    {
+      "index": "qdrant (local mode)",
+      "vectors": 5000,
+      "build_s": 0.32,
+      "query_ms_p50": 4.16,
+      "query_ms_p95": 6.504,
+      "recall@10_vs_exact": 1.0
+    }
+  ],
+  "caching": {
+    "reindex_cold_ms": 1.851,
+    "reindex_warm_ms": 0.048,
+    "embedding_cache_hits_on_reindex": 30,
+    "ask_first_ms_p50": 0.598,
+    "ask_repeat_ms_p50": 0.0006
+  }
+}

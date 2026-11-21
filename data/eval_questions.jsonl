@@ -1,0 +1,30 @@
+{"q": "How many keyers does each M/E bank on the production switcher have?", "doc": "switcher", "section": "Overview", "answer": "eight"}
+{"q": "What is the default rate for a mix on the switcher?", "doc": "switcher", "section": "Transitions", "answer": "30 frames"}
+{"q": "Which key types can I use to put graphics over video on the NL-4?", "doc": "switcher", "section": "Keyers", "answer": "chroma"}
+{"q": "How many saved states can a mix-effects bank store?", "doc": "switcher", "section": "Memory", "answer": "100"}
+{"q": "What happens to the switcher frame if a power supply dies?", "doc": "switcher", "section": "Redundancy", "answer": "keeps running"}
+{"q": "The program output froze and the REF light is blinking, what should I check?", "doc": "switcher", "section": "Troubleshooting", "answer": "reference"}
+{"q": "How is a studio camera head connected to the control room?", "doc": "camera", "section": "Overview", "answer": "fiber"}
+{"q": "What gain range can the shader set on the camera?", "doc": "camera", "section": "Iris and Shading", "answer": "18 decibels"}
+{"q": "What does a green light on the camera mean to the operator?", "doc": "camera", "section": "Tally", "answer": "preview"}
+{"q": "How long can the camera fiber cable be?", "doc": "camera", "section": "Fiber Link", "answer": "3 kilometres"}
+{"q": "Which talkback channels reach the camera operator's headset?", "doc": "camera", "section": "Intercom", "answer": "production"}
+{"q": "What kinds of on-air graphics does the real-time engine make?", "doc": "graphics", "section": "Overview", "answer": "lower thirds"}
+{"q": "What is a reusable graphic with text fields and animation called?", "doc": "graphics", "section": "Templates", "answer": "template"}
+{"q": "Can the graphics engine pull scores from a live sports feed or a REST API?", "doc": "graphics", "section": "Data Sources", "answer": "REST APIs"}
+{"q": "How do I put the graphic I am previewing on air?", "doc": "graphics", "section": "Playout", "answer": "take"}
+{"q": "What is the maximum texture size before rendering slows down?", "doc": "graphics", "section": "Performance", "answer": "4096"}
+{"q": "How many feeds does a standard replay system record and play back?", "doc": "replay", "section": "Overview", "answer": "eight"}
+{"q": "How many hours of recorded video does the replay server keep before overwriting?", "doc": "replay", "section": "Recording", "answer": "24 hours"}
+{"q": "How do I stop a highlight from being overwritten on the replay server?", "doc": "replay", "section": "Clips", "answer": "protected"}
+{"q": "What playback speeds are possible for slow motion replays?", "doc": "replay", "section": "Slow Motion", "answer": "200 percent"}
+{"q": "Which file formats can replay clips be exported in?", "doc": "replay", "section": "Export", "answer": "ProRes"}
+{"q": "What is the biggest router frame size?", "doc": "router", "section": "Overview", "answer": "288"}
+{"q": "How can I take many routes at once with one button to set up a show?", "doc": "router", "section": "Salvos", "answer": "salvo"}
+{"q": "How do I stop someone changing the transmission output during a live show?", "doc": "router", "section": "Locks and Protects", "answer": "lock"}
+{"q": "Which TCP port does third-party router control use?", "doc": "router", "section": "Control Protocol", "answer": "52116"}
+{"q": "How many video channels does the remote production gateway encode?", "doc": "gateway", "section": "Overview", "answer": "four"}
+{"q": "How much upload bandwidth is needed per HD channel for remote production?", "doc": "gateway", "section": "Network", "answer": "20 megabits"}
+{"q": "What end-to-end delay should I expect from the gateway?", "doc": "gateway", "section": "Latency", "answer": "150"}
+{"q": "How are remote production streams encrypted?", "doc": "gateway", "section": "Security", "answer": "AES-256"}
+{"q": "When does the gateway raise a packet loss alarm?", "doc": "gateway", "section": "Monitoring", "answer": "2 percent"}
