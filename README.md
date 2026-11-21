@@ -38,7 +38,17 @@ From `python -m ragkit.benchmark` (TF-IDF/LSA embeddings, run on a laptop-class 
 | 80-word windows (overlap 20) | 0.867 | 0.967 | 0.917 | 0.90 |
 | Section chunks, hybrid (dense + keyword) | 0.867 | 0.967 | 0.917 | 0.90 |
 
-Section-based chunking worked best here: windows split facts across chunks and lowered answer quality. Hybrid search did not help on this small corpus with these embeddings, and it doubled retrieval time, so dense search stays the default.
+**With a neural embedding model (all-MiniLM-L6-v2, run in GitHub Actions CI):** [results/benchmark_minilm.md](results/benchmark_minilm.md)
+
+| Setup | recall@1 | recall@3 | MRR | Answer contains the fact |
+|---|---|---|---|---|
+| Section chunks, dense | 0.933 | 0.967 | 0.95 | 0.967 |
+| 40-word windows (overlap 10) | 0.967 | **1.0** | 0.983 | **1.0** |
+| Section chunks, hybrid (dense + keyword) | **0.967** | **1.0** | **0.983** | **1.0** |
+
+With MiniLM, **hybrid search** lifted recall@1 from 0.933 to 0.967 and found the right section in the top 3 for every question, for about 1 ms of extra retrieval time. With the simpler LSA embeddings below it did not help, so whether hybrid search is worth it depends on the embedding model: measure, then choose.
+
+With LSA embeddings, section-based chunking worked best: windows split facts across chunks and lowered answer quality. Hybrid search did not help on this small corpus with these embeddings, and it doubled retrieval time, so dense search stays the default.
 
 **Search speed** on 50,000 simulated 384-dimension embeddings (top 10):
 
