@@ -25,6 +25,23 @@ question -> embedding -> semantic search (top k) -> grounded answer with citatio
 5. **Answer only from what was retrieved**, with a citation like `[router#Control Protocol]`. Offline, the answer is the best chunk's text. If `ANTHROPIC_API_KEY` is set, an LLM writes the answer from the retrieved text only and must reply "I could not find this in the manuals." when the context does not contain it. If the best match is too weak, the pipeline refuses instead of guessing.
 6. **Cache**: embeddings are cached by the SHA-256 of their text, so re-indexing skips unchanged chunks, and repeated questions are served from an LRU query cache.
 
+## Cohere Embed and Rerank
+
+`ragkit/cohere_models.py` adds Cohere's models through the v2 REST API:
+
+- **Cohere Embed** (`embed-v4.0`): chunks are embedded with `input_type="search_document"` and questions with
+  `input_type="search_query"`; batches of up to 96 texts; retries with backoff on rate limits (429) and server errors.
+- **Cohere Rerank** (`rerank-v3.5`): a second stage. The first stage retrieves 20 candidates, then the reranker reads
+  the question and each chunk together and re-orders them; the pipeline refuses when the best rerank score is below 0.1.
+
+```bash
+export COHERE_API_KEY=...            # free trial key from dashboard.cohere.com/api-keys; never commit it
+python -m ragkit.cohere_eval         # compares LSA, LSA + Rerank, Cohere Embed, Cohere Embed + Rerank
+```
+
+Results go to `results/benchmark_cohere.md`. Tests use a fake Cohere API (`tests/test_cohere.py`, 6 tests), so CI needs no key;
+a `cohere-eval` CI job runs the real comparison when the repository has a `COHERE_API_KEY` secret.
+
 ## Results
 
 From `python -m ragkit.benchmark` (TF-IDF/LSA embeddings, run on a laptop-class Linux machine; exact timings vary by machine). Full tables: [results/benchmark_lsa.md](results/benchmark_lsa.md).

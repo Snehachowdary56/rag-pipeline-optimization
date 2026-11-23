@@ -76,6 +76,12 @@ class CachedEmbedder:
         self.cache.clear()      # a refit changes the vector space, so old vectors are no longer valid
         return self
 
+    def encode_query(self, texts: list[str]) -> np.ndarray:
+        """Questions are not cached; models with a separate query mode (Cohere) use it."""
+        if hasattr(self.inner, "encode_query"):
+            return self.inner.encode_query(texts)
+        return self.inner.encode(texts)
+
     def encode(self, texts: list[str], batch_size: int = 64) -> np.ndarray:
         keys = [self.key(t) for t in texts]
         missing = [i for i, k in enumerate(keys) if k not in self.cache]

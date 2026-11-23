@@ -19,6 +19,9 @@ ROOT = Path(__file__).resolve().parent.parent
 
 
 def make_embedder(name: str):
+    if name == "cohere":
+        from .cohere_models import CohereEmbedder
+        return CachedEmbedder(CohereEmbedder())
     if name == "minilm":
         from .embedders import SBERTEmbedder
         return CachedEmbedder(SBERTEmbedder())

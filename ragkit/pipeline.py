@@ -39,6 +39,9 @@ class RAGPipeline:
     index_kind: str = "flat"
     hybrid_alpha: float | None = None   # None = dense only; 0.0-1.0 = weight of dense score in hybrid search
     min_score: float = 0.15             # below this the pipeline says it does not know
+    reranker: object | None = None      # optional second stage, e.g. CohereReranker
+    rerank_candidates: int = 20         # how many retrieved chunks the reranker re-scores
+    rerank_min_score: float = 0.1       # refusal threshold on the reranker's 0-1 relevance scale
     cache_size: int = 256
     _cache: OrderedDict = field(default_factory=OrderedDict, repr=False)
 
@@ -53,8 +56,21 @@ class RAGPipeline:
             self._lex_matrix = self._lex.fit_transform(texts)
         return self
 
+    def _encode_question(self, question: str) -> np.ndarray:
+        if hasattr(self.embedder, "encode_query"):
+            return self.embedder.encode_query([question])[0]
+        return self.embedder.encode([question])[0]
+
     def retrieve(self, question: str, k: int = 3) -> list[Retrieved]:
-        q = self.embedder.encode([question])[0]
+        if self.reranker is None:
+            return self._first_stage(question, k)
+        # Two-stage retrieval: a wide first stage, then the reranker reads question + chunk together and re-orders.
+        candidates = self._first_stage(question, min(len(self.chunks), max(self.rerank_candidates, k)))
+        ranked = self.reranker.rerank(question, [r.chunk.text for r in candidates], top_n=k)
+        return [Retrieved(candidates[i].chunk, score) for i, score in ranked]
+
+    def _first_stage(self, question: str, k: int) -> list[Retrieved]:
+        q = self._encode_question(question)
         if self.hybrid_alpha is None:
             ids, scores = self.index.search(q, k)
             return [Retrieved(self.chunks[i], float(s)) for i, s in zip(ids, scores, strict=True)]
@@ -74,7 +90,8 @@ class RAGPipeline:
             return Answer(hit.question, hit.answer, hit.citations, hit.retrieved,
                           (time.perf_counter() - start) * 1000, cached=True, grounded=hit.grounded)
         retrieved = self.retrieve(question, k)
-        if not retrieved or retrieved[0].score < self.min_score:
+        threshold = self.min_score if self.reranker is None else self.rerank_min_score
+        if not retrieved or retrieved[0].score < threshold:
             ans = Answer(question, NOT_FOUND, [], retrieved, 0.0, grounded=False)
         else:
             text = llm_answer(question, retrieved)
