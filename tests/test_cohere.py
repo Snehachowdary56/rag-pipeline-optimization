@@ -53,7 +53,7 @@ class FakeCohere:
 
 
 def client(fake, **kw):
-    return CohereClient(api_key="test-key", transport=httpx.MockTransport(fake), backoff_s=0, **kw)
+    return CohereClient(api_key="test-key", transport=httpx.MockTransport(fake), backoff_s=0, pace=False, **kw)
 
 
 def test_embed_uses_document_and_query_modes_and_batches():
@@ -75,6 +75,20 @@ def test_retries_when_rate_limited_then_succeeds():
     c = client(fake)
     assert c.embed(["hello"], "search_document").shape == (1, 256)
     assert c.calls == 3
+
+
+def test_repeated_rerank_is_served_from_cache_and_calls_are_paced(monkeypatch):
+    fake = FakeCohere()
+    c = client(fake)
+    c.rerank("port for router control", ["tcp port 52116", "power supply"], 1)
+    c.rerank("port for router control", ["tcp port 52116", "power supply"], 1)
+    assert c.calls == 1
+    slept = []
+    monkeypatch.setattr("ragkit.cohere_models.time.sleep", slept.append)
+    paced = CohereClient(api_key="k", transport=httpx.MockTransport(fake), pace=True)
+    paced.rerank("a", ["b"], 1)
+    paced.rerank("c", ["d"], 1)
+    assert slept and slept[0] > 5  # 10 rerank calls per minute on a trial key
 
 
 def test_clear_errors_for_bad_key_and_missing_key(monkeypatch):

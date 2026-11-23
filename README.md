@@ -30,7 +30,8 @@ question -> embedding -> semantic search (top k) -> grounded answer with citatio
 `ragkit/cohere_models.py` adds Cohere's models through the v2 REST API:
 
 - **Cohere Embed** (`embed-v4.0`): chunks are embedded with `input_type="search_document"` and questions with
-  `input_type="search_query"`; batches of up to 96 texts; retries with backoff on rate limits (429) and server errors.
+  `input_type="search_query"`; batches of up to 96 texts; calls are paced to the trial key's per-minute limits, retries honour `Retry-After`
+  on rate limits (429) and server errors, and repeated rerank requests are cached.
 - **Cohere Rerank** (`rerank-v3.5`): a second stage. The first stage retrieves 20 candidates, then the reranker reads
   the question and each chunk together and re-orders them; the pipeline refuses when the best rerank score is below 0.1.
 
@@ -39,7 +40,7 @@ export COHERE_API_KEY=...            # free trial key from dashboard.cohere.com/
 python -m ragkit.cohere_eval         # compares LSA, LSA + Rerank, Cohere Embed, Cohere Embed + Rerank
 ```
 
-Results go to `results/benchmark_cohere.md`. Tests use a fake Cohere API (`tests/test_cohere.py`, 6 tests), so CI needs no key;
+Results go to `results/benchmark_cohere.md`. Tests use a fake Cohere API (`tests/test_cohere.py`, 7 tests), so CI needs no key;
 a `cohere-eval` CI job runs the real comparison when the repository has a `COHERE_API_KEY` secret.
 
 ## Results
