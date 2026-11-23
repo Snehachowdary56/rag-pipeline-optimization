@@ -40,7 +40,17 @@ export COHERE_API_KEY=...            # free trial key from dashboard.cohere.com/
 python -m ragkit.cohere_eval         # compares LSA, LSA + Rerank, Cohere Embed, Cohere Embed + Rerank
 ```
 
-Results go to `results/benchmark_cohere.md`. Tests use a fake Cohere API (`tests/test_cohere.py`, 7 tests), so CI needs no key;
+Results with the real Cohere API (`results/benchmark_cohere.md`, from CI run 45264102772; 30 questions, section chunks, k = 3):
+
+| setup | recall@1 | recall@3 | MRR |
+|---|---|---|---|
+| LSA embeddings (offline baseline) | 0.900 | 0.967 | 0.933 |
+| LSA + Cohere rerank-v3.5 | **1.000** | 1.000 | 1.000 |
+| Cohere embed-v4.0 | 0.967 | 1.000 | 0.983 |
+| Cohere embed-v4.0 + rerank-v3.5 | **1.000** | 1.000 | 1.000 |
+
+Cohere Embed alone beat the offline baseline (recall@1 0.900 to 0.967), and adding Cohere Rerank put the right section first
+for all 30 questions. On a set this small that is a ceiling, so a harder question set is the next step. Tests use a fake Cohere API (`tests/test_cohere.py`, 7 tests), so CI needs no key;
 a `cohere-eval` CI job runs the real comparison when the repository has a `COHERE_API_KEY` secret.
 
 ## Results

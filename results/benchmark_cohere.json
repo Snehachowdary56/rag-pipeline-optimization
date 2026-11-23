@@ -1,0 +1,26 @@
+[
+  {
+    "setup": "LSA embeddings (offline baseline)",
+    "recall@1": 0.9,
+    "recall@3": 0.967,
+    "mrr": 0.933
+  },
+  {
+    "setup": "LSA + Cohere rerank-v3.5",
+    "recall@1": 1.0,
+    "recall@3": 1.0,
+    "mrr": 1.0
+  },
+  {
+    "setup": "Cohere embed-v4.0",
+    "recall@1": 0.967,
+    "recall@3": 1.0,
+    "mrr": 0.983
+  },
+  {
+    "setup": "Cohere embed-v4.0 + rerank-v3.5",
+    "recall@1": 1.0,
+    "recall@3": 1.0,
+    "mrr": 1.0
+  }
+]
